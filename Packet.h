@@ -4,11 +4,12 @@
 
 #define PACKET_SOF 0xAA//Start of the message for easy deframing
 #define PACKET_MAX_PAYLOAD 32 // 32 Bytes
-#define PACKET_HEADER 6
+#define PACKET_HEADER 7
 typedef struct __attribute__((packed)) {
   uint8_t SRC; // Source node addr 
   uint8_t DEST; // Destination node addr
   uint8_t TYPE; //Message type
+  uint8_t MSGID;//Message ID
   uint8_t TTL;
   uint8_t LEN; //Payload Length
   uint8_t payload[PACKET_MAX_PAYLOAD];//actual payload 

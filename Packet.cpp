@@ -24,12 +24,13 @@ size_t encode_packet(const Packet& pkt, uint8_t* out_buffer){
   out_buffer[1] = pkt.SRC;
   out_buffer[2] = pkt.DEST;
   out_buffer[3] = pkt.TYPE;
-  out_buffer[4] = pkt.TTL;
-  out_buffer[5] = pkt.LEN;
-  for(size_t i=6;i<pkt.LEN + 6;i++){
-    out_buffer[i] = pkt.payload[i -6];
+  out_buffer[4] = pkt.MSGID;
+  out_buffer[5] = pkt.TTL;
+  out_buffer[6] = pkt.LEN;
+  for(size_t i=7;i<pkt.LEN + 7;i++){
+    out_buffer[i] = pkt.payload[i -7];
   }
-  out_buffer[6 + pkt.LEN ] =  crc8_compute(&out_buffer[1],5 + pkt.LEN); 
+  out_buffer[7 + pkt.LEN ] =  crc8_compute(&out_buffer[1],6 + pkt.LEN); 
   return pkt.LEN + PACKET_HEADER + 1 ;// for SOF;
 }
 
@@ -43,6 +44,7 @@ bool decode_packet(const uint8_t* in_buffer, size_t in_len,Packet* out_pkt){
   out_pkt->SRC = in_buffer[curr++];
   out_pkt->DEST = in_buffer[curr++];
   out_pkt->TYPE = in_buffer[curr++];
+  out_pkt->MSGID = in_buffer[curr++];
   out_pkt->TTL = in_buffer[curr++];
   out_pkt->LEN = in_buffer[curr++];
   
@@ -53,6 +55,6 @@ bool decode_packet(const uint8_t* in_buffer, size_t in_len,Packet* out_pkt){
   }
 
   out_pkt->CHECK_SUM = in_buffer[curr++];
-  uint8_t rx_crc = crc8_compute(&in_buffer[1],5+out_pkt->LEN);
+  uint8_t rx_crc = crc8_compute(&in_buffer[1],6+out_pkt->LEN);
   return (rx_crc == out_pkt->CHECK_SUM); 
 }
